@@ -28,7 +28,7 @@ public class PostController {
     }
 
 
-    @GetMapping("/api/posts")
+    @GetMapping("/api/search")
     public List<Post> getPosts() {
         return postService.getPosts();
     }
