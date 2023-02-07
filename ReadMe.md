@@ -22,11 +22,20 @@ Use Case
 ![useCase.png](..%2F..%2FuseCase.png)
 
 API 명세서
-
-Function	   Method	   URL
-
-게시글 작성    	POST	/api/post
-게시글 전체 조회	GET	    /api/search
-특정 게시글 조회		
-게시글 수정		
-게시글 삭제	
+|기능|Method|url|request|response
+|---|---|---|---|---|
+|작성|POST|/api/post|{
+"username" : username,
+"title" : title,
+"content" : content,
+"password" : password
+}||
+|선택조회|GET|/api/posts/{id}|||
+|조회|GET|/api/search|||
+|수정|GET|/api/post/modify|{
+"username" : username2,
+"title" : title2,
+"content" : content2,
+"password" : password2
+||
+|삭제|GET|/api/post/delete|{"password" : password||
