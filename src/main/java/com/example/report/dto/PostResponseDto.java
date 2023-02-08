@@ -5,8 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class PostResponseDto {
-    private String msg;
-    private int statusCode;
     private String username;
     private String contents;
     private String title;
