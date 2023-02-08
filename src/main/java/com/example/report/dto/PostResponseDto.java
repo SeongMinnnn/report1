@@ -12,9 +12,7 @@ public class PostResponseDto {
     private String title;
     private String password;
 
-    public PostResponseDto(String msg, int statusCode, String username, String contents, String title, String password) {
-        this.msg = msg;
-        this.statusCode = statusCode;
+    public PostResponseDto(String username, String contents, String title, String password) {
         this.username = username;
         this.contents = contents;
         this.title = title;
@@ -23,10 +21,5 @@ public class PostResponseDto {
 
     // 선언시에만 형태를 지정해서 넣어준다 ()
     public PostResponseDto(Post post) {
-    }
-    
-    public PostResponseDto(String msg, int statusCode){
-        this.msg = msg;
-        this.statusCode = statusCode;
     }
 }

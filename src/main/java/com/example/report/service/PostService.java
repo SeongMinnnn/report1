@@ -73,6 +73,6 @@ public class PostService {
             System.out.println("게시글 삭제 성공");
         }
 
-        return new PostResponseDto ("게시글 삭제완료", HttpStatus.OK.value());
+        return new PostResponseDto(post);
     }
 }
