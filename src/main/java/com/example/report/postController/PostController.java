@@ -19,12 +19,12 @@ public class PostController {
     }
 
     @GetMapping("/api/search")
-    public List<PostResponseDto> getPosts(@PathVariable Long id) {
+    public List<PostResponseDto> getPosts() {
         return postService.getPosts();
     }
 
     @GetMapping("/api/search/post")
-    public PostRequestDto getPost(@PathVariable Long id) {
+    public PostRequestDto getPost(@RequestBody Long id) {
         return postService.getPost(id);
     }
 
@@ -33,8 +33,8 @@ public class PostController {
         return postService.update(id, requestDto);
     }
 
-    @DeleteMapping("/api/posts/{id}")
-    public PostResponseDto deletePost(@PathVariable Long id, String password){
-        return postService.deletePost(id,password);
+    @DeleteMapping("/api/post/{id}/delete")
+    public String deletePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
+        return "삭제완료";
     }
 }

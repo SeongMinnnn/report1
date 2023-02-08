@@ -10,14 +10,14 @@ public class PostResponseDto {
     private String title;
     private String password;
 
-    public PostResponseDto(String username, String contents, String title, String password) {
-        this.username = username;
-        this.contents = contents;
-        this.title = title;
-        this.password = password;
+    public PostResponseDto(Post post) {
+        this.username = post.getUsername();
+        this.contents = post.getContents();
+        this.title = post.getTitle();
+        this.password = post.getPassword();
     }
 
     // 선언시에만 형태를 지정해서 넣어준다 ()
-    public PostResponseDto(Post post) {
+    public PostResponseDto() {
     }
 }
