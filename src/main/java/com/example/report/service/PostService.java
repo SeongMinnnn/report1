@@ -1,10 +1,11 @@
 package com.example.report.service;
 
 import com.example.report.dto.PostRequestDto;
+import com.example.report.dto.PostResponseDto;
 import com.example.report.entity.Post;
 import com.example.report.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,21 +25,20 @@ public class PostService {
     // Transactional 어노테이션이 적용된 메서드에서 수행되는 모든 작업은 하나의 트랜잭션 안에서 수행
     // 즉 한 메서드에서 수행되는 여러 작업이 실패할 경우 이전에 수행된 모든 작업이 롤백되어서 원상태로 돌아간다.
     @Transactional
-    public Post createPost(PostRequestDto requestDto) {
+    public PostResponseDto createPost(PostRequestDto requestDto) {
         Post post = new Post(requestDto);
         postRepository.save(post);
-        return new Post(requestDto);
+        return new PostResponseDto(post);
     }
 
     @Transactional(readOnly = true)
-    public List<PostRequestDto> getPosts() {
+    public List<PostResponseDto> getPosts() {
         List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
-        List<PostRequestDto> postRequestDtoList = new ArrayList<>();
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         for(Post post : postList){
-            PostRequestDto tmp = new PostRequestDto(post);
-            postRequestDtoList.add(tmp);
+            postResponseDtoList.add(new PostResponseDto(post));
         }
-        return postRequestDtoList;
+        return postResponseDtoList;
     }
 
     @Transactional(readOnly = true)
@@ -50,16 +50,29 @@ public class PostService {
         return postRequestDto;
     }
 
-    @SneakyThrows
     @Transactional
-    public PostRequestDto update(Long id, PostRequestDto requestDto) {
+    public PostResponseDto update(Long id, PostRequestDto requestDto) {
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalAccessException("아이디가 존재하지 않습니다.")
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        if(requestDto.getPassword().equals(post.getPassword())){
+        if(post.getPassword().equals(post.getPassword())){
             post.update(requestDto);
         }
-        PostRequestDto postRequestDto = new PostRequestDto(post);
-        return postRequestDto;
+        PostResponseDto postResponseDto = new PostResponseDto(post);
+        return postResponseDto;
+    }
+
+    @Transactional
+    public PostResponseDto deletePost(Long id, String password) {
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+        );
+
+        if(post.getPassword().equals(password)) {
+            postRepository.deleteById(id);
+            System.out.println("게시글 삭제 성공");
+        }
+
+        return new PostResponseDto ("게시글 삭제완료", HttpStatus.OK.value());
     }
 }

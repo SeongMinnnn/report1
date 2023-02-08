@@ -1,7 +1,7 @@
 package com.example.report.postController;
 
 import com.example.report.dto.PostRequestDto;
-import com.example.report.entity.Post;
+import com.example.report.dto.PostResponseDto;
 import com.example.report.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +14,12 @@ public class PostController {
     private final PostService postService;
     //게시글 작성
     @PostMapping("/api/post")
-    public Post createPost(@RequestBody PostRequestDto requestDto){
+    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto){
         return postService.createPost(requestDto);
     }
 
     @GetMapping("/api/search")
-    public List<PostRequestDto> getPosts(@PathVariable Long id) {
+    public List<PostResponseDto> getPosts(@PathVariable Long id) {
         return postService.getPosts();
     }
 
@@ -29,8 +29,12 @@ public class PostController {
     }
 
     @PutMapping ("/api/post/{id}")
-    public PostRequestDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
+    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
         return postService.update(id, requestDto);
     }
 
+    @DeleteMapping("/api/posts/{id}")
+    public PostResponseDto deletePost(@PathVariable Long id, String password){
+        return postService.deletePost(id,password);
+    }
 }

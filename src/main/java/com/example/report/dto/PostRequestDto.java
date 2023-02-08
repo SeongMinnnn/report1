@@ -10,14 +10,4 @@ public class PostRequestDto {
     private String title;
     private String password;
 
-    public PostRequestDto(String username, String contents, String title, String password) {
-        this.username = username;
-        this.contents = contents;
-        this.title = title;
-        this.password = password;
-    }
-
-    // 선언시에만 형태를 지정해서 넣어준다 ()
-    public PostRequestDto(Post post) {
-    }
 }
