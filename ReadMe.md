@@ -33,5 +33,5 @@ Use Case
 |작성|POST| /api/post        | {"username" : "username", "title" : "title",  "contents" : "contents", "password" : "password"}              ||
 |조회|GET| /api/search      |||
 |선택조회|GET| /api/search/post |||
-|수정|PUT| /api/post/{id} | {"username" : username2,    "title" : "title2",   "contents" : "contents2",   "password" : "password2"   } ||
+|수정|PUT| /api/post/{id} | {"username" : username2,    "title" : "title2",   "contents" : "contents2",   "password" : "password2"   } | {"username" : username,    "title" : "title",   "contents" : "contents2",   "password" : "password"   } |
 |삭제|GET| /api/post/delete | {"password" : "password"} |||
