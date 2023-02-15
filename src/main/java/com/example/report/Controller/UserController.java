@@ -2,8 +2,9 @@ package com.example.report.Controller;
 
 import com.example.report.dto.LoginRequestDto;
 import com.example.report.dto.SignupRequestDto;
+import com.example.report.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,6 +12,7 @@ import java.awt.desktop.UserSessionEvent;
 
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
