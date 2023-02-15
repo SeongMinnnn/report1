@@ -3,6 +3,7 @@ package com.example.report.service;
 import com.example.report.dto.LoginRequestDto;
 import com.example.report.dto.SignupRequestDto;
 import com.example.report.entity.User;
+import com.example.report.entity.UserRoleEnum;
 import com.example.report.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void signup(SignupRequestDto signupRequestDto){
+    public void signup(SignupRequestDto signupRequestDto, UserRoleEnum role){
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
 
@@ -24,7 +25,7 @@ public class UserService {
         if(found.isPresent()){
             throw new IllegalArgumentException("사용자가 이미 존재합니다.");
         }
-        User user = new User(username, password);
+        User user = new User(username, password, role);
         userRepository.save(user);
     }
 
