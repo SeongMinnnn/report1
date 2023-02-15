@@ -25,6 +25,10 @@ public class User {
     @Pattern(regexp="[a-zA-Z0-9]{8,15}", message = "비밀번호는 영어와 숫자로 포함해서 8~15자리 이내로 입력해주세요.")
     private String password;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
+
     public User(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
