@@ -1,4 +1,4 @@
-package com.example.report.postController;
+package com.example.report.Controller;
 
 import com.example.report.dto.PostRequestDto;
 import com.example.report.dto.PostResponseDto;
