@@ -3,12 +3,17 @@ package com.example.report.service;
 import com.example.report.dto.PostRequestDto;
 import com.example.report.dto.PostResponseDto;
 import com.example.report.entity.Post;
+import com.example.report.entity.User;
 import com.example.report.repository.PostRepository;
+import com.example.report.entity.JwtUtil;
+import com.example.report.repository.UserRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,16 +24,33 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     // 요구사항1. 전체 게시글 목록 조회
     // (이때 RSP로 전달해야하는 것이 List가 아닌, DTO로 전달해야함)
     // Transactional 어노테이션이 적용된 메서드에서 수행되는 모든 작업은 하나의 트랜잭션 안에서 수행
     // 즉 한 메서드에서 수행되는 여러 작업이 실패할 경우 이전에 수행된 모든 작업이 롤백되어서 원상태로 돌아간다.
     @Transactional
-    public PostResponseDto createPost(PostRequestDto requestDto) {
-        Post post = new Post(requestDto);
-        postRepository.save(post);
-        return new PostResponseDto(post);
+    public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        if(token != null) {
+            if (jwtUtil.validateToken(token)) {
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+
+            Post post = new Post(requestDto);
+            postRepository.save(post);
+            return new PostResponseDto(post);
+        }else return null;
     }
 
     @Transactional(readOnly = true)
