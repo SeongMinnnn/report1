@@ -10,7 +10,7 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @Getter
-// JPA annotation, 기볹ㄱ인 속성을 가지는 entity Class가 상속할 수 있는 추상적인 entity Class 정의
+// JPA annotation, 기본적인 속성을 가지는 entity Class가 상속할 수 있는 추상적인 entity Class 정의
 // 이때 다음 정의된 클래스는 JPA에서 테이블로 매핑하지 않음, 그러나 이를 상속하는 클래스(Blog)는 해당 테이블에 매핑
 // 결론적으로 entity class들이 공통적으로 가지는 Property를 정의할 때 사용할 수 있음.
 @MappedSuperclass
