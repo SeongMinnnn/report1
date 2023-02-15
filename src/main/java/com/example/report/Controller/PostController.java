@@ -6,6 +6,7 @@ import com.example.report.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RequestMapping("/api")
@@ -15,8 +16,8 @@ public class PostController {
     private final PostService postService;
     //게시글 작성
     @PostMapping("/post")
-    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto){
-        return postService.createPost(requestDto);
+    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
+        return postService.createPost(requestDto, request);
     }
 
     @GetMapping("/search")
