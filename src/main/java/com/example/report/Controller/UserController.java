@@ -2,6 +2,7 @@ package com.example.report.Controller;
 
 import com.example.report.dto.LoginRequestDto;
 import com.example.report.dto.SignupRequestDto;
+import com.example.report.entity.UserRoleEnum;
 import com.example.report.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +14,8 @@ public class UserController {
 
     private final UserService userService;
     @PostMapping("/signup")
-    public String signupPage(@RequestBody SignupRequestDto signupRequestDto){
-        userService.signup(signupRequestDto);
+    public String signupPage(@RequestBody SignupRequestDto signupRequestDto, UserRoleEnum role){
+        userService.signup(signupRequestDto, role);
         return "회원 가입 완료";
     }
 
