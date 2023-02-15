@@ -13,13 +13,13 @@ public class UserController {
 
     private final UserService userService;
     @PostMapping("/signup")
-    public String signupPage(SignupRequestDto signupRequestDto){
+    public String signupPage(@RequestBody SignupRequestDto signupRequestDto){
         userService.signup(signupRequestDto);
         return "회원 가입 완료";
     }
 
     @PostMapping("/login")
-    public String loginPage(LoginRequestDto loginRequestDto){
+    public String loginPage(@RequestBody LoginRequestDto loginRequestDto){
         userService.login(loginRequestDto);
         return "로그인 완료";
     }
