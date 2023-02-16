@@ -47,7 +47,7 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            Post post = new Post(requestDto);
+            Post post = postRepository.saveAllAndFlush(new Post(requestDto, user.getId()));
             postRepository.save(post);
             return new PostResponseDto(post);
         }else return null;
