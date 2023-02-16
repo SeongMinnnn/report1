@@ -35,7 +35,7 @@ public class PostService {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
-        if(token != null) {
+        if (token != null) {
             if (jwtUtil.validateToken(token)) {
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
@@ -49,14 +49,14 @@ public class PostService {
             Post post = postRepository.saveAndFlush(new Post(requestDto, user));
             postRepository.save(post);
             return new PostResponseDto(post);
-        }else return null;
+        } else return null;
     }
 
     @Transactional(readOnly = true)
     public List<PostResponseDto> getPosts() {
         List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-        for(Post post : postList){
+        for (Post post : postList) {
             postResponseDtoList.add(new PostResponseDto(post));
         }
         return postResponseDtoList;
@@ -101,16 +101,25 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto deletePost (Long id, PostRequestDto requestDto){
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
-        );
+    public PostResponseDto deletePost(PostRequestDto requestDto, HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
 
-        if (post.getPassword().equals(requestDto.getPassword())) {
-            postRepository.deleteById(id);
-            System.out.println("게시글 삭제 성공");
-        }
+        if (token != null) {
+            if (jwtUtil.validateToken(token)) {
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
+            if (requestDto.getUsername().equals(user.getUsername())) {
+                post.delete(requestDto, user);
+            }
 
-        return new PostResponseDto(post);
+            return new PostResponseDto(post);
+        } else return null;
     }
 }
