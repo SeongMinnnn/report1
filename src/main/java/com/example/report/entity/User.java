@@ -2,13 +2,11 @@ package com.example.report.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity(name="users")
 public class User {
