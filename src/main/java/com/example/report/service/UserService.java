@@ -3,6 +3,7 @@ package com.example.report.service;
 import com.example.report.dto.LoginRequestDto;
 import com.example.report.dto.SignupRequestDto;
 import com.example.report.entity.User;
+import com.example.report.entity.UserRoleEnum;
 import com.example.report.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,14 @@ public class UserService {
         Optional<User> found = userRepository.findByUsername(username);
         if(found.isPresent()){
             throw new IllegalArgumentException("사용자가 이미 존재합니다.");
+        }
+
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (signupRequestDto.isAdmin()) {
+            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+            }
+            role = UserRoleEnum.ADMIN;
         }
         User user = new User(signupRequestDto);
         userRepository.save(user);
