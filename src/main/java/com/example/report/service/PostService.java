@@ -85,13 +85,16 @@ public class PostService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-//            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-//            if (requestDto.getUsername().equals(user.getUsername())) {
-//                post.update(requestDto, user);
-//            }
-            Post post = postRepository.findByUser().orElseThrow(
-                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
-            );
+            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
+            if (requestDto.getUsername().equals(user.getUsername())) {
+                post.update(requestDto, user);
+            }
+//            람다식 사용시
+//            update() <- Long id 추가 필요
+//            Post post = postRepository.findByIdAndId(id, user).orElseThrow(
+//                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+//            );
+//            PostRepository 확인
 
             return new PostResponseDto(post);
         } else return null;
