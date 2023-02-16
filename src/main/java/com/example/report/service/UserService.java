@@ -3,7 +3,6 @@ package com.example.report.service;
 import com.example.report.dto.LoginRequestDto;
 import com.example.report.dto.SignupRequestDto;
 import com.example.report.entity.User;
-import com.example.report.entity.UserRoleEnum;
 import com.example.report.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
