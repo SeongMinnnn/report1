@@ -27,11 +27,16 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String password;
 
-    public Post(PostRequestDto requestDto){
+    @ManyToOne
+    @JoinColumn
+    private User user;
+
+    public Post(PostRequestDto requestDto, User user){
         this.username = requestDto.getUsername();
         this.contents = requestDto.getContents();
         this.title = requestDto.getTitle();
         this.password = requestDto.getPassword();
+        this.user = user;
     }
 
     public void update(PostRequestDto requestDto) {
