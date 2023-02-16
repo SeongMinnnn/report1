@@ -2,10 +2,11 @@ package com.example.report.Controller;
 
 import com.example.report.dto.LoginRequestDto;
 import com.example.report.dto.SignupRequestDto;
-import com.example.report.entity.UserRoleEnum;
 import com.example.report.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/user")
@@ -20,8 +21,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginPage(@RequestBody LoginRequestDto loginRequestDto){
-        userService.login(loginRequestDto);
+    public String loginPage(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
+        userService.login(loginRequestDto, response);
         return "로그인 완료";
     }
 }
