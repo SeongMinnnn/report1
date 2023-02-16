@@ -9,7 +9,6 @@ import com.example.report.entity.JwtUtil;
 import com.example.report.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,24 +72,34 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto update(Long id, PostRequestDto requestDto) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-        );
-        if(post.getPassword().equals(post.getPassword())){
-            post.update(requestDto);
-        }
-        PostResponseDto postResponseDto = new PostResponseDto(post);
-        return postResponseDto;
+    public PostResponseDto update(Long id, PostRequestDto requestDto, HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        if (token != null) {
+            if (jwtUtil.validateToken(token)) {
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
+            if (requestDto.getUsername().equals(user.getUsername())) {
+                post.update(requestDto);
+            }
+            return new PostResponseDto(post);
+        } else return null;
     }
 
     @Transactional
-    public PostResponseDto deletePost(Long id, PostRequestDto requestDto) {
+    public PostResponseDto deletePost (Long id, PostRequestDto requestDto){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
 
-        if(post.getPassword().equals(requestDto.getPassword())) {
+        if (post.getPassword().equals(requestDto.getPassword())) {
             postRepository.deleteById(id);
             System.out.println("게시글 삭제 성공");
         }
