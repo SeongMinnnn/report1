@@ -2,6 +2,7 @@ package com.example.report.Controller;
 
 import com.example.report.dto.PostRequestDto;
 import com.example.report.dto.PostResponseDto;
+import com.example.report.dto.ResponseDto;
 import com.example.report.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class PostController {
     private final PostService postService;
     //게시글 작성
     @PostMapping("/post")
-    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
+    public ResponseDto<?> createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
         return postService.createPost(requestDto, request);
     }
 
@@ -31,12 +32,12 @@ public class PostController {
     }
 
     @PutMapping ("/post/{id}")
-    public PostResponseDto updatePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> updatePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
         return postService.update(requestDto, request);
     }
 
     @DeleteMapping("/post/{id}")
-    public PostResponseDto deletePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
+    public ResponseDto<?> deletePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
         return postService.deletePost(requestDto, request);
     }
 }

@@ -2,6 +2,7 @@ package com.example.report.service;
 
 import com.example.report.dto.PostRequestDto;
 import com.example.report.dto.PostResponseDto;
+import com.example.report.dto.ResponseDto;
 import com.example.report.entity.Post;
 import com.example.report.entity.User;
 import com.example.report.repository.PostRepository;
@@ -31,7 +32,7 @@ public class PostService {
     // Transactional 어노테이션이 적용된 메서드에서 수행되는 모든 작업은 하나의 트랜잭션 안에서 수행
     // 즉 한 메서드에서 수행되는 여러 작업이 실패할 경우 이전에 수행된 모든 작업이 롤백되어서 원상태로 돌아간다.
     @Transactional
-    public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -48,7 +49,7 @@ public class PostService {
 
             Post post = postRepository.saveAndFlush(new Post(requestDto, user));
             postRepository.save(post);
-            return new PostResponseDto(post);
+            return ResponseDto.success("게시완료");
         } else return null;
     }
 
@@ -72,7 +73,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto update(PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> update(PostRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -96,12 +97,12 @@ public class PostService {
 //            );
 //            PostRepository 확인
 
-            return new PostResponseDto(post);
+            return ResponseDto.success("수정 완료");
         } else return null;
     }
 
     @Transactional
-    public PostResponseDto deletePost(PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> deletePost(PostRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -118,8 +119,7 @@ public class PostService {
             if (requestDto.getUsername().equals(user.getUsername())) {
                 post.delete(requestDto, user);
             }
-
-            return new PostResponseDto(post);
+            return ResponseDto.success("삭제 완료");
         } else return null;
     }
 }
