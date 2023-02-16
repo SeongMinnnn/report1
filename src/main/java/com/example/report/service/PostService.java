@@ -72,7 +72,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto update(Long id, PostRequestDto requestDto, HttpServletRequest request) {
+    public PostResponseDto update(PostRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -85,10 +85,14 @@ public class PostService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-            if (requestDto.getUsername().equals(user.getUsername())) {
-                post.update(requestDto);
-            }
+//            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
+//            if (requestDto.getUsername().equals(user.getUsername())) {
+//                post.update(requestDto, user);
+//            }
+            Post post = postRepository.findByUser().orElseThrow(
+                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+            );
+
             return new PostResponseDto(post);
         } else return null;
     }
