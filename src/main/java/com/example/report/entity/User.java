@@ -1,5 +1,6 @@
 package com.example.report.entity;
 
+import com.example.report.dto.SignupRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,9 +28,9 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
+    public User(SignupRequestDto signupRequestDto) {
+        this.username = signupRequestDto.getUsername();
+        this.password = signupRequestDto.getPassword();
+        this.role = UserRoleEnum.USER;
     }
 }

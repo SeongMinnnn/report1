@@ -19,13 +19,12 @@ public class UserService {
     @Transactional
     public void signup(SignupRequestDto signupRequestDto){
         String username = signupRequestDto.getUsername();
-        String password = signupRequestDto.getPassword();
 
         Optional<User> found = userRepository.findByUsername(username);
         if(found.isPresent()){
             throw new IllegalArgumentException("사용자가 이미 존재합니다.");
         }
-        User user = new User(username, password);
+        User user = new User(signupRequestDto);
         userRepository.save(user);
     }
 
