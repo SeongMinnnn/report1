@@ -14,8 +14,8 @@ public class UserController {
 
     private final UserService userService;
     @PostMapping("/signup")
-    public String signupPage(@RequestBody SignupRequestDto signupRequestDto, UserRoleEnum role){
-        userService.signup(signupRequestDto, role);
+    public String signupPage(@RequestBody SignupRequestDto signupRequestDto){
+        userService.signup(signupRequestDto);
         return "회원 가입 완료";
     }
 

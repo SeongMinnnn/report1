@@ -17,7 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void signup(SignupRequestDto signupRequestDto, UserRoleEnum role){
+    public void signup(SignupRequestDto signupRequestDto){
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
 
@@ -25,7 +25,7 @@ public class UserService {
         if(found.isPresent()){
             throw new IllegalArgumentException("사용자가 이미 존재합니다.");
         }
-        User user = new User(username, password, role);
+        User user = new User(username, password);
         userRepository.save(user);
     }
 
