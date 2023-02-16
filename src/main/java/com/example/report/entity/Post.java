@@ -46,4 +46,12 @@ public class Post extends Timestamped {
         this.password = requestDto.getPassword();
         this.user = user;
     }
+
+    public void delete(PostRequestDto requestDto, User user) {
+        this.username = requestDto.getUsername();
+        this.contents = requestDto.getContents();
+        this.title = requestDto.getTitle();
+        this.password = requestDto.getPassword();
+        this.user = user;
+    }
 }
