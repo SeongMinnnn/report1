@@ -35,7 +35,6 @@ public class Post extends Timestamped {
         this.username = requestDto.getUsername();
         this.contents = requestDto.getContents();
         this.title = requestDto.getTitle();
-        this.password = requestDto.getPassword();
         this.user = user;
     }
 
