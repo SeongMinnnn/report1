@@ -31,8 +31,8 @@ public class PostController {
     }
 
     @PutMapping ("/post/{id}")
-    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest request) {
-        return postService.update(id, requestDto, request);
+    public PostResponseDto updatePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+        return postService.update(requestDto, request);
     }
 
     @DeleteMapping("/post/{id}/delete")
