@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByOrderByModifiedAtDesc();
 //    람다식 사용시 추가 필수 PK값 끼리 연결 내용
-//    Optional<Post> findByIdAndId(Long id, Long postId);
+    Optional<Post> findByIdAndId(Long id, Long userId);
 }
