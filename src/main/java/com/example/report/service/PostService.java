@@ -6,10 +6,11 @@ import com.example.report.dto.ResponseDto;
 import com.example.report.entity.Post;
 import com.example.report.entity.User;
 import com.example.report.repository.PostRepository;
-import com.example.report.entity.JwtUtil;
+import com.example.report.jwt.JwtUtil;
 import com.example.report.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,46 +75,77 @@ public class PostService {
 
     @Transactional
     public ResponseDto<?> update(Long id, PostRequestDto requestDto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        if (jwtUtil.checkToken(request)) {
+            Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.resolveToken(request));
 
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
+
             Post post = postRepository.findByIdAndId(id, user.getId()).orElseThrow(
                     () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
             );
+
             post.update(requestDto);
 
             return ResponseDto.success("수정 완료");
-        } else return null;
+        } else return ResponseDto.fail(400, "Token Error");
     }
+//        String token = jwtUtil.resolveToken(request);
+//
+//        if (token != null) {
+//            if (jwtUtil.validateToken(token)) {
+//                claims = jwtUtil.getUserInfoFromToken(token);
+//            } else {
+//                throw new IllegalArgumentException("Token Error");
+//            }
+//            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+//                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+//            );
+//            Post post = postRepository.findByIdAndId(id, user.getId()).orElseThrow(
+//                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+//            );
+//            post.update(requestDto);
+//
+//            return ResponseDto.success("수정 완료");
+//        } else return ResponseDto.fail(HttpStatus,"오류가 발생했습니다.");
+//    }
 
     @Transactional
-    public ResponseDto<?> deletePost(PostRequestDto requestDto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
+        if (jwtUtil.checkToken(request)) {
+            Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.resolveToken(request));
 
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.saveAndFlush(new Post(requestDto));
-            if (requestDto.getUsername().equals(user.getUsername())) {
-                post.delete(requestDto, user);
-            }
+
+            Post post = postRepository.findByIdAndId(id, user.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+            );
+
+            postRepository.delete(post);
+
             return ResponseDto.success("삭제 완료");
-        } else return null;
+        } else return ResponseDto.fail(400, "Token Error");
     }
+//        String token = jwtUtil.resolveToken(request);
+//        Claims claims;
+//
+//        if (token != null) {
+//            if (jwtUtil.validateToken(token)) {
+//                claims = jwtUtil.getUserInfoFromToken(token);
+//            } else {
+//                throw new IllegalArgumentException("Token Error");
+//            }
+//            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+//                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+//            );
+//            Post post = postRepository.saveAndFlush(new Post(requestDto));
+//            if (requestDto.getUsername().equals(user.getUsername())) {
+//                post.delete(requestDto, user);
+//            }
+//            return ResponseDto.success("삭제 완료");
+//        } else return null;
+//    }
 }
