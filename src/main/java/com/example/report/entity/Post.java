@@ -23,25 +23,23 @@ public class Post extends Timestamped {
 
     @Column(nullable = false)
     private String title;
-
-    @Column(nullable = false)
-    private String password;
+//  토큰 사용으로 필요 X
+//    @Column(nullable = false)
+//    private String password;
 
     @ManyToOne
     @JoinColumn(name ="user_id")
     private User user;
 
-    public Post(PostRequestDto requestDto){
-        this.username = requestDto.getUsername();
+    public Post(PostRequestDto requestDto, User user){
         this.contents = requestDto.getContents();
         this.title = requestDto.getTitle();
-        this.password = requestDto.getPassword();
+        this.user = user;
     }
 
-    public void update(PostRequestDto requestDto) {
-        this.username = requestDto.getUsername();
+    public void update(PostRequestDto requestDto, User user) {
         this.contents = requestDto.getContents();
         this.title = requestDto.getTitle();
-        this.password = requestDto.getPassword();
+        this.user = user;
     }
 }
