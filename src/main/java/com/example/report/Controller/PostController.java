@@ -21,19 +21,19 @@ public class PostController {
         return postService.createPost(requestDto, request);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/posts")
     public List<PostResponseDto> getPosts() {
         return postService.getPosts();
     }
 
-    @GetMapping("/search/post")
-    public PostRequestDto getPost(@RequestBody Long id) {
+    @GetMapping("/post/{id}")
+    public PostRequestDto getPost(@PathVariable Long id) {
         return postService.getPost(id);
     }
 
     @PutMapping ("/post/{id}")
-    public ResponseDto<?> updatePost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
-        return postService.update(requestDto, request);
+    public ResponseDto<?> updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+        return postService.update(id, requestDto, request);
     }
 
     @DeleteMapping("/post/{id}")
