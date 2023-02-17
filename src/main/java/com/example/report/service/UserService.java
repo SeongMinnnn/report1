@@ -2,7 +2,7 @@ package com.example.report.service;
 
 import com.example.report.dto.LoginRequestDto;
 import com.example.report.dto.SignupRequestDto;
-import com.example.report.entity.JwtUtil;
+import com.example.report.jwt.JwtUtil;
 import com.example.report.entity.User;
 import com.example.report.entity.UserRoleEnum;
 import com.example.report.repository.UserRepository;
@@ -36,7 +36,7 @@ public class UserService {
             }
             role = UserRoleEnum.ADMIN;
         }
-        User user = new User(signupRequestDto);
+        User user = new User(signupRequestDto, role);
         userRepository.save(user);
     }
 
