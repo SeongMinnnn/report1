@@ -47,7 +47,7 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
+            Post post = postRepository.saveAndFlush(new Post(requestDto));
             postRepository.save(post);
             return ResponseDto.success("게시완료");
         } else return null;
@@ -73,7 +73,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseDto<?> update(PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> update(Long id, PostRequestDto requestDto, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -86,16 +86,10 @@ public class PostService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-            if (requestDto.getUsername().equals(user.getUsername())) {
-                post.update(requestDto, user);
-            }
-//            람다식 사용시
-//            update() <- Long id 추가 필요
-//            Post post = postRepository.findByIdAndId(id, user).orElseThrow(
-//                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
-//            );
-//            PostRepository 확인
+            Post post = postRepository.findByIdAndId(id, user.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+            );
+            post.update(requestDto);
 
             return ResponseDto.success("수정 완료");
         } else return null;
@@ -115,7 +109,7 @@ public class PostService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
+            Post post = postRepository.saveAndFlush(new Post(requestDto));
             if (requestDto.getUsername().equals(user.getUsername())) {
                 post.delete(requestDto, user);
             }
