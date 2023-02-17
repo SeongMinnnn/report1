@@ -21,7 +21,7 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    @Pattern(regexp="[a-zA-Z0-9]{8,15}", message = "비밀번호는 영어와 숫자로 포함해서 8~15자리 이내로 입력해주세요.")
+    @Pattern(regexp="([a-z]+)([A-Z]+)(\\d+)([$@!%*?&]+){8,15}", message = "비밀번호는 영어와 숫자로 포함해서 8~15자리 이내로 입력해주세요.")
     private String password;
 
     @Column(nullable = false)
@@ -31,6 +31,5 @@ public class User {
     public User(SignupRequestDto signupRequestDto) {
         this.username = signupRequestDto.getUsername();
         this.password = signupRequestDto.getPassword();
-        this.role = UserRoleEnum.USER;
     }
 }
