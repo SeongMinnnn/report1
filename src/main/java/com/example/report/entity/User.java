@@ -1,6 +1,7 @@
 package com.example.report.entity;
 
 import com.example.report.dto.SignupRequestDto;
+import com.example.report.repository.UserRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,15 +22,16 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    @Pattern(regexp="([a-z]+)([A-Z]+)(\\d+)([$@!%*?&]+){8,15}", message = "비밀번호는 영어와 숫자로 포함해서 8~15자리 이내로 입력해주세요.")
+    @Pattern(regexp = "[A-Za-z\\d\\W]{8,15}",message = "비밀번호는 영어와 숫자로 포함해서 8~15자리 이내로 입력해주세요.")
     private String password;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    public User(SignupRequestDto signupRequestDto) {
+    public User(SignupRequestDto signupRequestDto, UserRoleEnum role) {
         this.username = signupRequestDto.getUsername();
         this.password = signupRequestDto.getPassword();
+        this.role = role;
     }
 }
