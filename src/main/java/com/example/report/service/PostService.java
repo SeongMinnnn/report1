@@ -5,6 +5,7 @@ import com.example.report.dto.PostResponseDto;
 import com.example.report.dto.ResponseDto;
 import com.example.report.entity.Post;
 import com.example.report.entity.User;
+import com.example.report.entity.UserRoleEnum;
 import com.example.report.repository.PostRepository;
 import com.example.report.jwt.JwtUtil;
 import com.example.report.repository.UserRepository;
@@ -48,7 +49,7 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            Post post = postRepository.saveAndFlush(new Post(requestDto));
+            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
             postRepository.save(post);
             return ResponseDto.success("게시완료");
         } else return null;
@@ -85,8 +86,8 @@ public class PostService {
             Post post = postRepository.findByIdAndId(id, user.getId()).orElseThrow(
                     () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
             );
-
-            post.update(requestDto);
+            if (user.getRole().equals(UserRoleEnum.ADMIN) || post.getUsername().equals(user.getUsername()))
+            post.update(requestDto, user);
 
             return ResponseDto.success("수정 완료");
         } else return ResponseDto.fail(400, "Token Error");
