@@ -15,8 +15,6 @@ public class Post extends Timestamped {
     // 보통 AUTO, IDENTITY, SEQUENCE, TABLE 방식들이 있다.
     private Long id;
 
-    @Column(nullable = false)
-    private String username;
 
     @Column(nullable = false)
     private String contents;
@@ -28,7 +26,7 @@ public class Post extends Timestamped {
 //    private String password;
 
     @ManyToOne
-    @JoinColumn(name ="user_id")
+    @JoinColumn
     private User user;
 
     public Post(PostRequestDto requestDto, User user){
