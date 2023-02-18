@@ -7,15 +7,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
 public class PostRequestDto {
     private String contents;
     private String title;
-    private LocalDateTime createdAt;
-
-    public PostRequestDto(Post post) {
-        this.contents = post.getContents();
-        this.title = post.getTitle();
-        this.createdAt = post.getCreatedAt();
-    }
 }
