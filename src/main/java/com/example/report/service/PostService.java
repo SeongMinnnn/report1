@@ -70,7 +70,7 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당글이 없습니다.")
         );
-        PostRequestDto postRequestDto = new PostRequestDto(post);
+        PostRequestDto postRequestDto = new PostRequestDto();
         return postRequestDto;
     }
 
