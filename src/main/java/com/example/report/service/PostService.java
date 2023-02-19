@@ -65,12 +65,12 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostRequestDto getPost(Long id) {
+    public PostResponseDto getPost(Long id) {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당글이 없습니다.")
         );
-        PostRequestDto postRequestDto = new PostRequestDto();
-        return postRequestDto;
+        PostResponseDto responseDto = new PostResponseDto(post);
+        return responseDto;
     }
 
     @Transactional
