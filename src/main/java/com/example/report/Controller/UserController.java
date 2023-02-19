@@ -1,6 +1,7 @@
 package com.example.report.Controller;
 
 import com.example.report.dto.LoginRequestDto;
+import com.example.report.dto.ResponseDto;
 import com.example.report.dto.SignupRequestDto;
 import com.example.report.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +16,14 @@ public class UserController {
 
     private final UserService userService;
     @PostMapping("/signup")
-    public String signupPage(@RequestBody SignupRequestDto signupRequestDto){
+    public ResponseDto<?> signupPage(@RequestBody SignupRequestDto signupRequestDto){
         userService.signup(signupRequestDto);
-        return "회원 가입 완료";
+        return ResponseDto.success("회원 가입 완료");
     }
 
     @PostMapping("/login")
-    public String loginPage(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
+    public ResponseDto loginPage(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
         userService.login(loginRequestDto, response);
-        return "로그인 완료";
+        return ResponseDto.success("로그인 완료");
     }
 }
