@@ -1,6 +1,5 @@
 package com.example.report.repository;
 
-import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import com.example.report.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
