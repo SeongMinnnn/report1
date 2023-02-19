@@ -87,7 +87,7 @@ public class PostService {
             );
 
             if (user.getRole().equals(UserRoleEnum.ADMIN) || post.getUser().getUsername().equals(user.getUsername())){
-                post.update(requestDto, user);
+                post.update(requestDto);
             }else return ResponseDto.fail(400, "수정 권한이 없습니다.");
 
             return ResponseDto.success("수정 완료");

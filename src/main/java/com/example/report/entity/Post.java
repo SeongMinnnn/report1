@@ -15,7 +15,6 @@ public class Post extends Timestamped {
     // 보통 AUTO, IDENTITY, SEQUENCE, TABLE 방식들이 있다.
     private Long id;
 
-
     @Column(nullable = false)
     private String contents;
 
@@ -35,9 +34,8 @@ public class Post extends Timestamped {
         this.user = user;
     }
 
-    public void update(PostRequestDto requestDto, User user) {
+    public void update(PostRequestDto requestDto) {
         this.contents = requestDto.getContents();
         this.title = requestDto.getTitle();
-        this.user = user;
     }
 }
