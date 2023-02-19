@@ -51,7 +51,7 @@ public class PostService {
             Post post = postRepository.saveAndFlush(new Post(requestDto, user));
             postRepository.save(post);
             return ResponseDto.success("게시완료");
-        } else return null;
+        } else return ResponseDto.fail(400, "Token Error");
     }
 
     @Transactional(readOnly = true)
@@ -88,7 +88,7 @@ public class PostService {
 
             if (user.getRole().equals(UserRoleEnum.ADMIN) || post.getUser().getUsername().equals(user.getUsername())){
                 post.update(requestDto, user);
-            }else return null;
+            }else return ResponseDto.fail(400, "수정 권한이 없습니다.");
 
             return ResponseDto.success("수정 완료");
         } else return ResponseDto.fail(400, "Token Error");
@@ -128,7 +128,7 @@ public class PostService {
 
             if (user.getRole().equals(UserRoleEnum.ADMIN) || post.getUser().getUsername().equals(user.getUsername())){
                 postRepository.delete(post);
-            }else return null;
+            }else return ResponseDto.fail(400,"삭제 권한이 없습니다.");
 
             return ResponseDto.success("삭제 완료");
         } else return ResponseDto.fail(400, "Token Error");
