@@ -1,11 +1,14 @@
 package com.example.report.service;
 
+//import com.example.report.dto.JinsDto;
 import com.example.report.dto.PostRequestDto;
 import com.example.report.dto.PostResponseDto;
 import com.example.report.dto.ResponseDto;
+import com.example.report.entity.Comment;
 import com.example.report.entity.Post;
 import com.example.report.entity.User;
 import com.example.report.entity.UserRoleEnum;
+import com.example.report.repository.CommentRepository;
 import com.example.report.repository.PostRepository;
 import com.example.report.jwt.JwtUtil;
 import com.example.report.repository.UserRepository;
@@ -26,6 +29,7 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
     // 요구사항1. 전체 게시글 목록 조회
@@ -48,18 +52,22 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-            postRepository.save(post);
+            postRepository.save(new Post(requestDto, user));
             return ResponseDto.success("게시완료");
         } else return ResponseDto.fail(400, "Token Error");
     }
 
     @Transactional(readOnly = true)
     public List<PostResponseDto> getPosts() {
-        List<Post> postList = postRepository.findAllByOrderByPostCreatedAtDesc();
+        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+        List<Comment> commentList = new ArrayList<>();
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         for (Post post : postList) {
-            postResponseDtoList.add(new PostResponseDto(post));
+            for (Comment comment : post.getComments()){
+                commentList.add(comment);
+            }
+            commentList = commentRepository.findAllByOrderByCreatedAtDesc();
+            postResponseDtoList.add(new PostResponseDto(post, commentList));
         }
         return postResponseDtoList;
     }
@@ -69,7 +77,7 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당글이 없습니다.")
         );
-        PostResponseDto responseDto = new PostResponseDto(post);
+        PostResponseDto responseDto = new PostResponseDto(post, post.getComments());
         return responseDto;
     }
 
@@ -151,5 +159,34 @@ public class PostService {
 //            }
 //            return ResponseDto.success("삭제 완료");
 //        } else return null;
+////    }
+//    public JinsDto getPost(Long id){
+//
+//        Optional<Post> post = postRepository.findById(id);
+//
+//        // entity -> dto
+//
+//        // null 체크 / 예외처리 필수
+//        if (post.isEmpty()) {
+//            throw new IllegalArgumentException();
+//        }
+//        Post post1 = post.get();
+//
+//        List<Comment> comments = post1.getComments();
+//
+//        List<JinsDto.Comment> commentList = new ArrayList<>();
+//        for (Comment comment : comments){
+//            JinsDto.Comment build = JinsDto.Comment.builder()
+//                    .title(comment.getTitle())
+//                    .comment(comment.getComment())
+//                    .build();
+//
+//            commentList.add(build);
+//        }
+//
+//        JinsDto.builder()
+//                .title(post1.getTitle())
+//                .contnet(post1.getComments())
+//                .build();
 //    }
 }
