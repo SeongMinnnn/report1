@@ -1,7 +1,7 @@
 package com.example.report.entity;
 
 import com.example.report.dto.SignupRequestDto;
-import com.example.report.repository.UserRepository;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +15,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JoinColumn(name = "user_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -29,6 +30,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
+    @JsonIgnore
     public User(SignupRequestDto signupRequestDto, UserRoleEnum role) {
         this.username = signupRequestDto.getUsername();
         this.password = signupRequestDto.getPassword();
