@@ -36,8 +36,8 @@ public class UserService {
             }
             role = UserRoleEnum.ADMIN;
         }
-        User user = new User(signupRequestDto, role);
-        userRepository.save(user);
+
+        userRepository.save(new User(signupRequestDto, role));
     }
 
     @Transactional(readOnly = true)
