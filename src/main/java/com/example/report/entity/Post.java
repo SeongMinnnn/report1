@@ -1,10 +1,15 @@
 package com.example.report.entity;
 
+import com.example.report.dto.CommentResponseDto;
 import com.example.report.dto.PostRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter  //클래스에 Property에 대한 getter 메서드를 자동으로 생성해주는 것
 @Entity  //Blog라는 클래스가 JPA Entity클래스로 사용될 것이라는 것, 즉 데이터 베이스에 저장할 데이터 구조를 말한다.
@@ -16,42 +21,40 @@ public class Post extends Timestamped {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String contents;
 
     @Column(nullable = false)
     private String title;
+//  토큰 사용으로 필요 X
+//    @Column(nullable = false)
+//    private String password;
 
-    @Column(nullable = false)
-    private String password;
-
-    @ManyToOne
-    @JoinColumn(name ="user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
     public Post(PostRequestDto requestDto, User user){
-        this.username = requestDto.getUsername();
         this.contents = requestDto.getContents();
         this.title = requestDto.getTitle();
-        this.password = requestDto.getPassword();
         this.user = user;
     }
 
-    public void update(PostRequestDto requestDto, User user) {
-        this.username = requestDto.getUsername();
+    public void update(PostRequestDto requestDto) {
         this.contents = requestDto.getContents();
         this.title = requestDto.getTitle();
-        this.password = requestDto.getPassword();
-        this.user = user;
     }
-
-    public void delete(PostRequestDto requestDto, User user) {
-        this.username = requestDto.getUsername();
-        this.contents = requestDto.getContents();
-        this.title = requestDto.getTitle();
-        this.password = requestDto.getPassword();
-        this.user = user;
-    }
+//    public void addComment(Comment comment){
+//        this.comments.add(comment);
+//        if(comment.getPost() != this){
+//            comment.setPost(this);
+//        }
+//    }
+//    public void removeComment(Comment comment){
+//        comments.remove(comment);
+////        comment.setPost(null);
+//    }
 }

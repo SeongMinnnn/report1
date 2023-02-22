@@ -1,5 +1,6 @@
-package com.example.report.entity;
+package com.example.report.jwt;
 
+import com.example.report.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
@@ -81,4 +82,13 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
+    //////////////////////////인가 내용//////////////////////
+
+    public boolean checkToken(HttpServletRequest request){
+        String token = resolveToken(request);
+        if (!validateToken(token)) return false;
+
+        if (getUserInfoFromToken(token) != null) return true;
+        else return false;
+    }
 }

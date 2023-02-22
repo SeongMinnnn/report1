@@ -1,12 +1,16 @@
 package com.example.report.service;
 
+//import com.example.report.dto.JinsDto;
 import com.example.report.dto.PostRequestDto;
 import com.example.report.dto.PostResponseDto;
 import com.example.report.dto.ResponseDto;
+import com.example.report.entity.Comment;
 import com.example.report.entity.Post;
 import com.example.report.entity.User;
+import com.example.report.entity.UserRoleEnum;
+import com.example.report.repository.CommentRepository;
 import com.example.report.repository.PostRepository;
-import com.example.report.entity.JwtUtil;
+import com.example.report.jwt.JwtUtil;
 import com.example.report.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +29,7 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
     // 요구사항1. 전체 게시글 목록 조회
@@ -47,79 +52,141 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-            postRepository.save(post);
+            postRepository.save(new Post(requestDto, user));
             return ResponseDto.success("게시완료");
-        } else return null;
+        } else return ResponseDto.fail(400, "Token Error");
     }
 
     @Transactional(readOnly = true)
     public List<PostResponseDto> getPosts() {
-        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+        List<Comment> commentList = new ArrayList<>();
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         for (Post post : postList) {
-            postResponseDtoList.add(new PostResponseDto(post));
+            for (Comment comment : post.getComments()){
+                commentList.add(comment);
+            }
+            commentList = commentRepository.findAllByOrderByCreatedAtDesc();
+            postResponseDtoList.add(new PostResponseDto(post, commentList));
         }
         return postResponseDtoList;
     }
 
     @Transactional(readOnly = true)
-    public PostRequestDto getPost(Long id) {
+    public PostResponseDto getPost(Long id) {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당글이 없습니다.")
         );
-        PostRequestDto postRequestDto = new PostRequestDto(post);
-        return postRequestDto;
+        PostResponseDto responseDto = new PostResponseDto(post, post.getComments());
+        return responseDto;
     }
 
     @Transactional
-    public ResponseDto<?> update(PostRequestDto requestDto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public ResponseDto<?> update(Long id, PostRequestDto requestDto, HttpServletRequest request) {
+        if (jwtUtil.checkToken(request)) {
+            Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.resolveToken(request));
 
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-            if (requestDto.getUsername().equals(user.getUsername())) {
-                post.update(requestDto, user);
-            }
-//            람다식 사용시
-//            update() <- Long id 추가 필요
-//            Post post = postRepository.findByIdAndId(id, user).orElseThrow(
-//                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
-//            );
-//            PostRepository 확인
+
+            Post post = postRepository.findById(id).orElseThrow(
+                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+            );
+
+            if (user.getRole().equals(UserRoleEnum.ADMIN) || post.getUser().getUsername().equals(user.getUsername())){
+                post.update(requestDto);
+            }else return ResponseDto.fail(400, "수정 권한이 없습니다.");
 
             return ResponseDto.success("수정 완료");
-        } else return null;
+        } else return ResponseDto.fail(400, "Token Error");
     }
+//        String token = jwtUtil.resolveToken(request);
+//
+//        if (token != null) {
+//            if (jwtUtil.validateToken(token)) {
+//                claims = jwtUtil.getUserInfoFromToken(token);
+//            } else {
+//                throw new IllegalArgumentException("Token Error");
+//            }
+//            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+//                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+//            );
+//            Post post = postRepository.findByIdAndId(id, user.getId()).orElseThrow(
+//                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+//            );
+//            post.update(requestDto);
+//
+//            return ResponseDto.success("수정 완료");
+//        } else return ResponseDto.fail(HttpStatus,"오류가 발생했습니다.");
+//    }
 
     @Transactional
-    public ResponseDto<?> deletePost(PostRequestDto requestDto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
+        if (jwtUtil.checkToken(request)) {
+            Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.resolveToken(request));
 
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.saveAndFlush(new Post(requestDto, user));
-            if (requestDto.getUsername().equals(user.getUsername())) {
-                post.delete(requestDto, user);
-            }
+
+            Post post = postRepository.findById(id).orElseThrow(
+                    () -> new IllegalArgumentException("게시물이 존재하지 않습니다.")
+            );
+
+            if (user.getRole().equals(UserRoleEnum.ADMIN) || post.getUser().getUsername().equals(user.getUsername())){
+                postRepository.delete(post);
+            }else return ResponseDto.fail(400,"삭제 권한이 없습니다.");
+
             return ResponseDto.success("삭제 완료");
-        } else return null;
+        } else return ResponseDto.fail(400, "Token Error");
     }
+//        String token = jwtUtil.resolveToken(request);
+//        Claims claims;
+//
+//        if (token != null) {
+//            if (jwtUtil.validateToken(token)) {
+//                claims = jwtUtil.getUserInfoFromToken(token);
+//            } else {
+//                throw new IllegalArgumentException("Token Error");
+//            }
+//            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+//                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+//            );
+//            Post post = postRepository.saveAndFlush(new Post(requestDto));
+//            if (requestDto.getUsername().equals(user.getUsername())) {
+//                post.delete(requestDto, user);
+//            }
+//            return ResponseDto.success("삭제 완료");
+//        } else return null;
+////    }
+//    public JinsDto getPost(Long id){
+//
+//        Optional<Post> post = postRepository.findById(id);
+//
+//        // entity -> dto
+//
+//        // null 체크 / 예외처리 필수
+//        if (post.isEmpty()) {
+//            throw new IllegalArgumentException();
+//        }
+//        Post post1 = post.get();
+//
+//        List<Comment> comments = post1.getComments();
+//
+//        List<JinsDto.Comment> commentList = new ArrayList<>();
+//        for (Comment comment : comments){
+//            JinsDto.Comment build = JinsDto.Comment.builder()
+//                    .title(comment.getTitle())
+//                    .comment(comment.getComment())
+//                    .build();
+//
+//            commentList.add(build);
+//        }
+//
+//        JinsDto.builder()
+//                .title(post1.getTitle())
+//                .contnet(post1.getComments())
+//                .build();
+//    }
 }
