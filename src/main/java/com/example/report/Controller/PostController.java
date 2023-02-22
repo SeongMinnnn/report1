@@ -16,7 +16,7 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     //게시글 작성
-    @PostMapping("/post")
+    @PostMapping("/post")   //<?> 와일드카드를 사용 지양, 예외처리를 직접 Custom 해서 사용
     public ResponseDto<?> createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
         return postService.createPost(requestDto, request);
     }
