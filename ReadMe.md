@@ -35,8 +35,9 @@
 
 |기능|Method| url              | request                                                                                              |response|
 |-----|--|------------------|------------------------------------------------------------------------------------------------------|---|
-|작성|POST| /api/post        | {"username" : "username", "title" : "title",  "contents" : "contents", "password" : "password"}              |{"username" : "username", "title" : "title",  "contents" : "contents", "password" : "password"}|
-|조회|GET| /api/search      |||
-|선택조회|GET| /api/search/post |||
-|수정|PUT| /api/post/{id} | {"username" : username2,    "title" : "title2",   "contents" : "contents2",   "password" : "password2"   } | {"username" : username,    "title" : "title",   "contents" : "contents2",   "password" : "password"   } |
-|삭제|GET| /api/post/delete | {"password" : "password"} |삭제완료|
+|작성|POST| /api/post        | {"username": "user123", "title": "제목",  "contents": "내용", "password": "user!1234"}              |{"username": "username", "title": "title",  "contents": "contents", "password": "user!1234"}|
+|로그인|POST|/api/user/login||{"username":"user123", "password": "user!1234"}
+|조회|GET| /api/posts      ||{"username": "user123", "contents": "내용", "title": "제목", "createdAt" "2022-07-25T12:43:01.226062", "modifiedAt": "2022-07-25T12:43:01.22602"}|
+|선택조회|GET| /api/post ||{"username": "user123", "contents": "내용", "title": "제목", "createdAt" "2022-07-25T12:43:01.226062", "modifiedAt": "2022-07-25T12:43:01.22602", "comments" : "댓글"}|
+|수정|PUT| /api/post/{id} | {"username": user123,    "title" : "제목",   "contents" : "내용",   "password" : "user!1234"   } | {"username" : user123,    "title" : "제목2",   "contents" : "내용2",   "password" : "user!1234"   } |
+|삭제|GET| /api/post/{id} | {"password" : "password"} |{"success":true}|
